@@ -13,10 +13,14 @@ data_table = dash_table.DataTable(
 dropdown = dcc.Dropdown(
 )
 
+time_series_chart = dcc.Graph(
+)
+
 app.layout = html.Div([
     html.H1(children='Анализ данных о посещении веб-сайта'),
     data_table,
-    dropdown
+    dropdown,
+    time_series_chart,
 ])
 
 if __name__ == '__main__':
