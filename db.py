@@ -16,11 +16,15 @@ dropdown = dcc.Dropdown(
 time_series_chart = dcc.Graph(
 )
 
+pie_chart = dcc.Graph(
+)
+
 app.layout = html.Div([
     html.H1(children='Анализ данных о посещении веб-сайта'),
     data_table,
     dropdown,
     time_series_chart,
+    pie_chart,
 ])
 
 if __name__ == '__main__':
