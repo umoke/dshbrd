@@ -8,7 +8,7 @@ import base64
 app = dash.Dash(__name__)
 
 app.layout = html.Div([
-    html.H1(children='Анализ данных о посещении веб-сайта'),
+    html.H1(children='Анализ данных о посещении веб-сайта', style={'textAlign': 'center'}),
 
     dcc.Upload(
         id='upload-data',
@@ -21,10 +21,12 @@ app.layout = html.Div([
     dcc.Dropdown(
         id='dropdown',
         options=[
-            {'label': 'Visitors', 'value': 'Visitors'},
-            {'label': 'Pageviews', 'value': 'Pageviews'},
-            {'label': 'Bounce Rate', 'value': 'BounceRate'},
-            {'label': 'Average Session Duration', 'value': 'AvgSessionDuration'}
+            {'label': 'Количество посетителей за день', 'value': 'Visitors'},
+            {'label': 'Количество новых посетителей за день', 'value': 'NewVisitors'},
+            {'label': 'Количество просмотренных страниц за день', 'value': 'Pageviews'},
+            {'label': 'Процент посетителей, которые ушли с сайта после просмотра только одной страницы',
+             'value': 'BounceRate'},
+            {'label': 'Средняя продолжительность сессии в минутах', 'value': 'AvgSessionDuration'}
         ],
         value='Visitors',
     ),
@@ -65,11 +67,17 @@ def update_charts(contents, selected_metric, start_date, end_date):
 
     filtered_data = decoded[(decoded['Date'] >= start_date) & (decoded['Date'] <= end_date)]
 
-    time_series_fig = px.line(filtered_data,x='Date',y=selected_metric,title=f'График временного ряда для {selected_metric}',labels={'Date': 'Дата', selected_metric: selected_metric})
+    time_series_fig = px.line(filtered_data, x='Date', y=selected_metric,
+                              title=f'График временного ряда для {selected_metric}',
+                              labels={'Date': 'Дата', selected_metric: selected_metric})
 
-    pie_chart_fig = px.pie(filtered_data,names='Date',values=selected_metric,title=f'Круговая диаграмма для {selected_metric}',labels={'Date': 'Дата', selected_metric: selected_metric})
+    pie_chart_fig = px.pie(filtered_data,names='Date', values=selected_metric,
+                           title=f'Круговая диаграмма для {selected_metric}',
+                           labels={'Date': 'Дата', selected_metric: selected_metric})
 
-    histogram_fig = px.bar(filtered_data, x='Date', y=selected_metric, title=f'Гистограмма для {selected_metric}', labels={'Date': 'Дата', selected_metric: selected_metric})
+    histogram_fig = px.bar(filtered_data, x='Date', y=selected_metric,
+                           title=f'Гистограмма для {selected_metric}',
+                           labels={'Date': 'Дата', selected_metric: selected_metric})
 
     return time_series_fig, pie_chart_fig, histogram_fig
 
