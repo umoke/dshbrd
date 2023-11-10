@@ -7,10 +7,6 @@ app = dash.Dash(__name__)
 
 df = pd.read_csv('data/visitors.csv')
 
-data_table = dash_table.DataTable(
-    data=df.to_dict('records')
-)
-
 dropdown = dcc.Dropdown(
     id='dropdown',
     options=[
@@ -36,11 +32,11 @@ histogram = dcc.Graph(
 
 app.layout = html.Div([
     html.H1(children='Анализ данных о посещении веб-сайта'),
+    html.P('Выберите категорию для анализа:'),
     dropdown,
     time_series_chart,
     pie_chart,
     histogram,
-    data_table,
 ])
 
 
