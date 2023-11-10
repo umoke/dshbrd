@@ -1,5 +1,5 @@
 import dash
-from dash import html, dash_table
+from dash import html, dash_table, dcc
 import pandas as pd
 
 app = dash.Dash(__name__)
@@ -10,9 +10,13 @@ data_table = dash_table.DataTable(
     data=df.to_dict('records')
 )
 
+dropdown = dcc.Dropdown(
+)
+
 app.layout = html.Div([
     html.H1(children='Анализ данных о посещении веб-сайта'),
-    data_table
+    data_table,
+    dropdown
 ])
 
 if __name__ == '__main__':
