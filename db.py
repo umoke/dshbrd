@@ -29,6 +29,14 @@ app.layout = html.Div([
         value='Visitors',
     ),
 
+    html.P('Выберите период анализа:'),
+
+    dcc.DatePickerRange(
+        id='date-picker-range',
+        start_date='2023-01-01',
+        end_date=None
+    ),
+
     dcc.Graph(
         id='time-series-chart',
     ),
@@ -45,20 +53,23 @@ app.layout = html.Div([
 
 @app.callback(
     [Output('time-series-chart', 'figure'), Output('pie-chart', 'figure'), Output('histogram', 'figure')],
-    [Input('upload-data', 'contents'), Input('dropdown', 'value')]
+    [Input('upload-data', 'contents'), Input('dropdown', 'value'), Input('date-picker-range', 'start_date'),
+     Input('date-picker-range', 'end_date')]
 )
-def update_charts(contents, selected_metric):
+def update_charts(contents, selected_metric, start_date, end_date):
     if contents is None:
         return {}, {}, {}
 
     content_type, content_string = contents.split(',')
     decoded = pd.read_csv(io.StringIO(base64.b64decode(content_string).decode('utf-8')))
 
-    time_series_fig = px.line(decoded,x='Date',y=selected_metric,title=f'График временного ряда для {selected_metric}',labels={'Date': 'Дата', selected_metric: selected_metric})
+    filtered_data = decoded[(decoded['Date'] >= start_date) & (decoded['Date'] <= end_date)]
 
-    pie_chart_fig = px.pie(decoded,names='Date',values=selected_metric,title=f'Круговая диаграмма для {selected_metric}',labels={'Date': 'Дата', selected_metric: selected_metric})
+    time_series_fig = px.line(filtered_data,x='Date',y=selected_metric,title=f'График временного ряда для {selected_metric}',labels={'Date': 'Дата', selected_metric: selected_metric})
 
-    histogram_fig = px.bar(decoded, x='Date', y=selected_metric, title=f'Гистограмма для {selected_metric}', labels={'Date': 'Дата', selected_metric: selected_metric})
+    pie_chart_fig = px.pie(filtered_data,names='Date',values=selected_metric,title=f'Круговая диаграмма для {selected_metric}',labels={'Date': 'Дата', selected_metric: selected_metric})
+
+    histogram_fig = px.bar(filtered_data, x='Date', y=selected_metric, title=f'Гистограмма для {selected_metric}', labels={'Date': 'Дата', selected_metric: selected_metric})
 
     return time_series_fig, pie_chart_fig, histogram_fig
 
